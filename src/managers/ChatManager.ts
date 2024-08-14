@@ -35,14 +35,14 @@ class ChatManager {
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
-      prompt: 'cloving> ',
+      prompt: '\x1b[32mcloving> \x1b[0m', // Set the prompt to green
       historySize: 1000,
     })
     this.chunkManager = new ChunkManager()
   }
 
   async initialize() {
-    console.log('Welcome to Cloving REPL. Type "exit" to quit.')
+    console.log('\nWelcome to Cloving REPL.\n\n\x1b[31mType "exit" to quit.\x1b[0m\n')
     this.rl.prompt()
 
     this.setupEventListeners()
@@ -159,7 +159,7 @@ class ChatManager {
         console.info('Last response copied to clipboard.')
       })
     } else {
-      console.error('No response to copy.')
+      console.error('\n\x1b[31mNo response to copy.\x1b[0m')
     }
   }
 
@@ -183,7 +183,7 @@ class ChatManager {
         this.rl.prompt()
       }
     } else {
-      console.error('No response to save files from.')
+      console.error('\n\x1b[31mNo response to save files from.\x1b[0m')
       this.rl.prompt()
     }
   }
@@ -192,7 +192,7 @@ class ChatManager {
     const diff = execSync('git diff HEAD').toString().trim()
 
     if (!diff) {
-      console.error('No changes to commit.')
+      console.error('\n\x1b[31mNo changes to commit.\x1b[0m')
       this.rl.prompt()
       return
     }
@@ -209,7 +209,7 @@ class ChatManager {
     try {
       execFileSync('git', ['commit', '-a', '--edit', '--file', tempCommitFilePath], { stdio: 'inherit' })
     } catch (commitError) {
-      console.error('Commit was canceled or failed.')
+      console.error('\n\x1b[31mCommit was canceled or failed.\x1b[0m')
     }
 
     fs.unlink(tempCommitFilePath, (err) => {
@@ -226,7 +226,7 @@ class ChatManager {
     try {
       execSync(command, { stdio: 'inherit' })
     } catch (error) {
-      console.error('Error running command:', error)
+      console.error('\n\x1b[31mError running command:\x1b[0m', error)
     }
     this.rl.prompt()
   }
@@ -274,7 +274,7 @@ class ChatManager {
       })
 
       responseStream.data.on('error', (error: Error) => {
-        console.error('Error streaming response:', error)
+        console.error('\n\x1b[31mError streaming response:\x1b[0m', error)
         this.isProcessing = false
         process.stdout.write('\n')
         this.rl.prompt()
@@ -302,7 +302,7 @@ class ChatManager {
       // get token estimate for prompt
       const promptTokens = Math.ceil(this.prompt.length / 4).toLocaleString()
 
-      console.error(`Error processing a ${promptTokens} token prompt:`, errorMessage, `(${errorNumber})\n`)
+      console.error(`\n\x1b[31mError processing a ${promptTokens} token prompt:\x1b[0m`, errorMessage, `(${errorNumber})\n`)
       this.isProcessing = false
       this.rl.prompt()
     }
